@@ -135,9 +135,11 @@ public final class ClaudeService {
         command.add(message);
         command.add("--output-format");
         command.add("json");
-        command.add("--bare");
+        // Note: do NOT pass --bare. It skips the credential-loading path, which
+        // breaks CLAUDE_CODE_OAUTH_TOKEN auth (claude reports "Not logged in").
+        // --allowedTools is variadic: pass each tool as its own argument.
         command.add("--allowedTools");
-        command.add(config.allowedToolsArg());
+        command.addAll(config.allowedTools());
         // Note: the claude CLI has no --cwd flag; the working directory is set on
         // the ProcessBuilder instead (see invoke()), which is how it picks up the
         // CLAUDE.md in that folder.
