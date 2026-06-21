@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -48,6 +50,7 @@ public final class ClaudeService {
         // Keep stdout and stderr separate: stdout carries the JSON we parse,
         // stderr is captured only for diagnostics.
         pb.redirectErrorStream(false);
+        applyOauthToken(pb);
 
         long start = System.currentTimeMillis();
         Process process;
@@ -102,6 +105,27 @@ public final class ClaudeService {
         return parse(stdout, exitCode, elapsed, stderr);
     }
 
+    /**
+     * If a token file is configured, read it and set CLAUDE_CODE_OAUTH_TOKEN on
+     * the subprocess so headless claude can authenticate. Read per-invocation so
+     * a rotated token takes effect without a server restart.
+     */
+    private void applyOauthToken(ProcessBuilder pb) {
+        String file = config.oauthTokenFile();
+        if (file == null || file.isBlank()) {
+            return;
+        }
+        try {
+            String token = Files.readString(Path.of(file), StandardCharsets.UTF_8).trim();
+            if (!token.isEmpty()) {
+                pb.environment().put("CLAUDE_CODE_OAUTH_TOKEN", token);
+            }
+        } catch (IOException e) {
+            // Leave the ambient environment in place; the call will fail clearly
+            // ("Not logged in") if no other auth is present.
+        }
+    }
+
     private List<String> buildCommand(String message, String resumeSessionId) {
         // ProcessBuilder passes args directly to exec(), so no shell quoting is
         // needed (and none must be added) around the message or tool list.
@@ -114,8 +138,9 @@ public final class ClaudeService {
         command.add("--bare");
         command.add("--allowedTools");
         command.add(config.allowedToolsArg());
-        command.add("--cwd");
-        command.add(config.workingDirectory());
+        // Note: the claude CLI has no --cwd flag; the working directory is set on
+        // the ProcessBuilder instead (see invoke()), which is how it picks up the
+        // CLAUDE.md in that folder.
         if (resumeSessionId != null && !resumeSessionId.isBlank()) {
             command.add("--resume");
             command.add(resumeSessionId);

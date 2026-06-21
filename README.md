@@ -34,10 +34,16 @@ Output jar: `build/libs/ClaudeBridge-<version>.jar`. It bundles no dependencies
 The Paper server — and therefore this plugin's `ProcessBuilder` — runs **inside a
 Wings game container**. That has two consequences:
 
-- The `claude` binary must be installed and authenticated **inside the container's
-  persistent volume** (`/home/container`), not just on the OCI host. A binary on
-  the host PATH is not visible to the plugin. Use the **native installer**
+- The `claude` binary must be installed **inside the container's persistent
+  volume** (`/home/container`), not just on the OCI host. A binary on the host
+  PATH is not visible to the plugin. Use the **native installer**
   (`curl -fsSL https://claude.ai/install.sh | bash`) — the container has no node.
+- Headless auth uses a **long-lived OAuth token**: run `claude setup-token` on a
+  machine you can log in on, then put the token in the file referenced by
+  `claude-oauth-token-file` (default
+  `/home/container/claude-mc-bridge/.claude-oauth-token`, mode 0600). The plugin
+  injects it as `CLAUDE_CODE_OAUTH_TOKEN`. Copying `~/.claude/.credentials.json`
+  does **not** work — that file is not what authenticates the CLI.
 - Console commands: the plugin exposes a localhost, token-guarded HTTP endpoint
   (`command-endpoint` in config) and runs commands via RCON internally, returning
   their output. Claude calls it with `curl` (no python/node needed). RCON must be

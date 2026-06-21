@@ -19,6 +19,7 @@ public final class BridgeConfig {
     private final int cooldownSeconds;
     private final int maxResponseLength;
     private final String logFile;
+    private final String oauthTokenFile;
     private final boolean endpointEnabled;
     private final String endpointBind;
     private final int endpointPort;
@@ -29,9 +30,9 @@ public final class BridgeConfig {
 
     private BridgeConfig(String claudeBinary, String workingDirectory, List<String> allowedTools,
                          int timeoutSeconds, String permissionNode, int cooldownSeconds,
-                         int maxResponseLength, String logFile, boolean endpointEnabled,
-                         String endpointBind, int endpointPort, String endpointToken,
-                         String rconHost, int rconPort, int rconTimeoutMillis) {
+                         int maxResponseLength, String logFile, String oauthTokenFile,
+                         boolean endpointEnabled, String endpointBind, int endpointPort,
+                         String endpointToken, String rconHost, int rconPort, int rconTimeoutMillis) {
         this.claudeBinary = claudeBinary;
         this.workingDirectory = workingDirectory;
         this.allowedTools = List.copyOf(allowedTools);
@@ -40,6 +41,7 @@ public final class BridgeConfig {
         this.cooldownSeconds = cooldownSeconds;
         this.maxResponseLength = maxResponseLength;
         this.logFile = logFile;
+        this.oauthTokenFile = oauthTokenFile;
         this.endpointEnabled = endpointEnabled;
         this.endpointBind = endpointBind;
         this.endpointPort = endpointPort;
@@ -59,6 +61,7 @@ public final class BridgeConfig {
                 cfg.getInt("cooldown-seconds", 15),
                 cfg.getInt("max-response-length", 1500),
                 cfg.getString("log-file", "invocations.log"),
+                cfg.getString("claude-oauth-token-file", ""),
                 cfg.getBoolean("command-endpoint.enabled", true),
                 cfg.getString("command-endpoint.bind", "127.0.0.1"),
                 cfg.getInt("command-endpoint.port", 8765),
@@ -103,6 +106,16 @@ public final class BridgeConfig {
 
     public String logFile() {
         return logFile;
+    }
+
+    /**
+     * Path to a file containing a long-lived Claude Code OAuth token (from
+     * {@code claude setup-token}). If set, its contents are injected as the
+     * CLAUDE_CODE_OAUTH_TOKEN env var for the claude subprocess. Empty = rely on
+     * the ambient environment instead.
+     */
+    public String oauthTokenFile() {
+        return oauthTokenFile;
     }
 
     public boolean endpointEnabled() {

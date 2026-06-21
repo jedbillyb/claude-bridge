@@ -33,6 +33,13 @@ max-response-length: 1500
 # (plugins/ClaudeBridge/). Absolute paths are used as-is.
 log-file: "invocations.log"
 
+# Path to a file holding a long-lived Claude Code OAuth token, produced by
+# running `claude setup-token` on a machine you can log in on. If set, the
+# plugin injects its contents as CLAUDE_CODE_OAUTH_TOKEN when invoking claude
+# (headless auth). Leave blank to rely on the ambient environment instead.
+# Keep this file 0600 and out of version control.
+claude-oauth-token-file: "/home/container/claude-mc-bridge/.claude-oauth-token"
+
 # Localhost HTTP endpoint that lets the Claude process run console commands.
 # The plugin runs the command via RCON internally and returns its output, so
 # Claude never needs the RCON password — it just POSTs to this endpoint with a
