@@ -36,11 +36,13 @@ Wings game container**. That has two consequences:
 
 - The `claude` binary must be installed and authenticated **inside the container's
   persistent volume** (`/home/container`), not just on the OCI host. A binary on
-  the host PATH is not visible to the plugin.
-- Console commands are sent via **RCON** (enabled in `server.properties`), using
-  the bundled `rcon.py`. There is no tmux/screen console. Set `RCON_PASSWORD` in
-  the server's runtime environment (e.g. a Pelican startup variable); never commit
-  it.
+  the host PATH is not visible to the plugin. Use the **native installer**
+  (`curl -fsSL https://claude.ai/install.sh | bash`) — the container has no node.
+- Console commands: the plugin exposes a localhost, token-guarded HTTP endpoint
+  (`command-endpoint` in config) and runs commands via RCON internally, returning
+  their output. Claude calls it with `curl` (no python/node needed). RCON must be
+  enabled in `server.properties` (the plugin reads `rcon.port`/`rcon.password`
+  from there automatically). There is no tmux/screen console.
 
 ## Command
 

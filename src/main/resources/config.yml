@@ -32,3 +32,21 @@ max-response-length: 1500
 # Audit log file. Relative paths are placed inside this plugin's data folder
 # (plugins/ClaudeBridge/). Absolute paths are used as-is.
 log-file: "invocations.log"
+
+# Localhost HTTP endpoint that lets the Claude process run console commands.
+# The plugin runs the command via RCON internally and returns its output, so
+# Claude never needs the RCON password — it just POSTs to this endpoint with a
+# bearer token. Bind stays on loopback; do not expose it off-box.
+command-endpoint:
+  enabled: true
+  bind: "127.0.0.1"
+  port: 8765
+  # Bearer token Claude must send (X-Bridge-Token header). Leave blank to have
+  # the plugin generate one at startup and write it to
+  # <working-directory>/.bridge-token for the local Claude to read.
+  token: ""
+  # RCON connection the plugin uses internally. Leave rcon-port at 0 to read
+  # rcon.port (and rcon.password) from the server's server.properties.
+  rcon-host: "127.0.0.1"
+  rcon-port: 0
+  rcon-timeout-ms: 5000

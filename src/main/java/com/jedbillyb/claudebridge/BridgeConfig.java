@@ -19,10 +19,19 @@ public final class BridgeConfig {
     private final int cooldownSeconds;
     private final int maxResponseLength;
     private final String logFile;
+    private final boolean endpointEnabled;
+    private final String endpointBind;
+    private final int endpointPort;
+    private final String endpointToken;
+    private final String rconHost;
+    private final int rconPort;
+    private final int rconTimeoutMillis;
 
     private BridgeConfig(String claudeBinary, String workingDirectory, List<String> allowedTools,
                          int timeoutSeconds, String permissionNode, int cooldownSeconds,
-                         int maxResponseLength, String logFile) {
+                         int maxResponseLength, String logFile, boolean endpointEnabled,
+                         String endpointBind, int endpointPort, String endpointToken,
+                         String rconHost, int rconPort, int rconTimeoutMillis) {
         this.claudeBinary = claudeBinary;
         this.workingDirectory = workingDirectory;
         this.allowedTools = List.copyOf(allowedTools);
@@ -31,6 +40,13 @@ public final class BridgeConfig {
         this.cooldownSeconds = cooldownSeconds;
         this.maxResponseLength = maxResponseLength;
         this.logFile = logFile;
+        this.endpointEnabled = endpointEnabled;
+        this.endpointBind = endpointBind;
+        this.endpointPort = endpointPort;
+        this.endpointToken = endpointToken;
+        this.rconHost = rconHost;
+        this.rconPort = rconPort;
+        this.rconTimeoutMillis = rconTimeoutMillis;
     }
 
     public static BridgeConfig from(FileConfiguration cfg) {
@@ -42,7 +58,14 @@ public final class BridgeConfig {
                 cfg.getString("permission-node", "claudebridge.use"),
                 cfg.getInt("cooldown-seconds", 15),
                 cfg.getInt("max-response-length", 1500),
-                cfg.getString("log-file", "invocations.log"));
+                cfg.getString("log-file", "invocations.log"),
+                cfg.getBoolean("command-endpoint.enabled", true),
+                cfg.getString("command-endpoint.bind", "127.0.0.1"),
+                cfg.getInt("command-endpoint.port", 8765),
+                cfg.getString("command-endpoint.token", ""),
+                cfg.getString("command-endpoint.rcon-host", "127.0.0.1"),
+                cfg.getInt("command-endpoint.rcon-port", 0),
+                cfg.getInt("command-endpoint.rcon-timeout-ms", 5000));
     }
 
     public String claudeBinary() {
@@ -80,5 +103,35 @@ public final class BridgeConfig {
 
     public String logFile() {
         return logFile;
+    }
+
+    public boolean endpointEnabled() {
+        return endpointEnabled;
+    }
+
+    public String endpointBind() {
+        return endpointBind;
+    }
+
+    public int endpointPort() {
+        return endpointPort;
+    }
+
+    /** Configured token, or empty string to mean "auto-generate at startup". */
+    public String endpointToken() {
+        return endpointToken;
+    }
+
+    public String rconHost() {
+        return rconHost;
+    }
+
+    /** Configured RCON port, or 0 to mean "read rcon.port from server.properties". */
+    public int rconPort() {
+        return rconPort;
+    }
+
+    public int rconTimeoutMillis() {
+        return rconTimeoutMillis;
     }
 }

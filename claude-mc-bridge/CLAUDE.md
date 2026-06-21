@@ -12,32 +12,32 @@ so keep it short and avoid long preambles.
   You are executing *inside that container*. Your working directory is this
   folder, and the server's data lives one level up at the container root
   (`/home/container`).
-- There is **no tmux/screen console** here. Do not look for one.
+- There is **no tmux/screen console** here, and **no python**. Do not look for them.
 
-## How to check server status
+## How to check server status and send console commands
 
-- Online players / quick liveness: `python3 rcon.py "list"`
-- Server version / basic info: `python3 rcon.py "version"`
-- TPS / performance (Paper): `python3 rcon.py "tps"` or `python3 rcon.py "mspt"`
-- A specific player: `python3 rcon.py "data get entity <player> Pos"` etc.
+The ClaudeBridge plugin runs a small HTTP endpoint on `127.0.0.1:8765` that runs
+console commands for you and returns their output. This is the **only** sanctioned
+way to run commands. There is no python here; use `curl` (which is installed).
 
-## How to send console commands
-
-Use the RCON helper in this folder — it is the **only** sanctioned way to issue
-console commands:
+The bearer token is in `.bridge-token` in this folder. Read it and pass it in the
+`X-Bridge-Token` header. One-liner:
 
 ```
-python3 rcon.py "<minecraft console command without a leading slash>"
+curl -s -X POST http://127.0.0.1:8765/command \
+  -H "X-Bridge-Token: $(cat .bridge-token)" \
+  --data "<minecraft console command without a leading slash>"
 ```
 
 Examples:
-- `python3 rcon.py "say Server restarting in 5 minutes"`
-- `python3 rcon.py "whitelist add SomePlayer"`
-- `python3 rcon.py "weather clear"`
-- `python3 rcon.py "save-all"`
+- Players online:  `... --data "list"`
+- Performance:     `... --data "tps"`  (or `mspt`)
+- Broadcast:       `... --data "say Server restarting in 5 minutes"`
+- Whitelist:       `... --data "whitelist add SomePlayer"`
+- Save the world:  `... --data "save-all"`
 
-The RCON password is supplied via the `RCON_PASSWORD` environment variable
-(already set in the runtime). Never print it, never write it to a file.
+The command's text output is returned in the HTTP response body. Never print the
+token or the RCON password, and never write them anywhere.
 
 ## Where the logs live
 
