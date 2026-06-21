@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.jedbillyb'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'papermc'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+}
+
+dependencies {
+    // Paper API is provided by the server at runtime (compileOnly = not bundled into the jar).
+    // Gson is also bundled with the Paper server, so we don't ship any dependencies:
+    // the build outputs a single, dependency-free plugin jar.
+    compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
+}
+
+java {
+    // Paper 1.21.x requires Java 21. The toolchain makes Gradle provision a JDK 21
+    // regardless of the JDK used to launch Gradle.
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    def props = [version: project.version]
+    inputs.properties(props)
+    filteringCharset = 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand(props)
+    }
+}
+
+jar {
+    archiveBaseName = 'ClaudeBridge'
+}

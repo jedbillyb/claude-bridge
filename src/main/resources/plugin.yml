@@ -1,0 +1,19 @@
+name: ClaudeBridge
+version: '${version}'
+main: com.jedbillyb.claudebridge.ClaudeBridgePlugin
+api-version: '1.21'
+authors: [Jed]
+description: Talk to a local Claude Code instance from in-game chat via /claude.
+# Folia note: this plugin uses the legacy global scheduler. Run on Paper, not Folia.
+
+commands:
+  claude:
+    description: Send a message to the local Claude Code instance.
+    usage: /claude <message>
+    # Permission is checked in code against the configurable 'permission-node'
+    # in config.yml. The node below only sets the default for the stock value.
+
+permissions:
+  claudebridge.use:
+    description: Allows using /claude.
+    default: op

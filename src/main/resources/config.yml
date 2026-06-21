@@ -1,0 +1,34 @@
+# ClaudeBridge configuration.
+# Every /claude call spawns a real `claude` process (which costs money), so the
+# cooldown and timeout below matter — tune them deliberately.
+
+# Path to the authenticated `claude` binary. Use an absolute path if it isn't on
+# the server process's PATH. NOTE: the server runs inside a Pelican/Wings Docker
+# container, so this binary must exist *inside the container's* filesystem
+# (i.e. under the persistent /home/container volume), not just on the host.
+claude-binary: "/home/container/.local/bin/claude"
+
+# Dedicated project folder passed as --cwd. Must contain a CLAUDE.md that tells
+# Claude how to inspect/operate this server. Lives in the persistent volume.
+working-directory: "/home/container/claude-mc-bridge"
+
+# Tools Claude is allowed to use (passed to --allowedTools, comma-joined).
+allowed-tools:
+  - "Bash"
+  - "Read"
+
+# Kill the claude process and report a timeout after this many seconds.
+timeout-seconds: 60
+
+# Permission node required to run /claude. Defaults to op-only via plugin.yml.
+permission-node: "claudebridge.use"
+
+# Per-player rate limit between invocations, in seconds. 0 disables it.
+cooldown-seconds: 15
+
+# Responses longer than this (characters) are truncated in chat with a note.
+max-response-length: 1500
+
+# Audit log file. Relative paths are placed inside this plugin's data folder
+# (plugins/ClaudeBridge/). Absolute paths are used as-is.
+log-file: "invocations.log"
