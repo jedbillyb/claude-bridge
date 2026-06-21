@@ -1,7 +1,9 @@
 # ClaudeBridge
 
-A single Paper plugin (Paper API 1.21.x) that lets server ops talk to a local,
-already-authenticated **Claude Code** instance from in-game chat via `/claude`.
+A single Paper plugin (**Paper 26.1.2 and up**, Minecraft calendar versioning)
+that lets server ops talk to a local, already-authenticated **Claude Code**
+instance from in-game chat via `/claude`. Built against the 26.1.2 stable API.
+Requires **Java 25** (Paper 26.1.x's minimum).
 
 Every `/claude <message>` shells out to the local `claude` binary, captures and
 parses its JSON output, and sends the response back into Minecraft chat. Sessions
@@ -10,7 +12,7 @@ are kept per-player (in memory) so follow-up questions retain context.
 ## Build
 
 Requires nothing pre-installed except a JDK to launch Gradle — the wrapper
-provisions a JDK 21 toolchain automatically.
+provisions a JDK 25 toolchain automatically.
 
 ```bash
 ./gradlew build

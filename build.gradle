@@ -17,14 +17,16 @@ dependencies {
     // Paper API is provided by the server at runtime (compileOnly = not bundled into the jar).
     // Gson is also bundled with the Paper server, so we don't ship any dependencies:
     // the build outputs a single, dependency-free plugin jar.
-    compileOnly 'io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT'
+    // Compile against the 26.1.2 stable API (Minecraft moved to calendar
+    // versioning after 1.21.11). The jar runs on 26.1.2 and newer.
+    compileOnly 'io.papermc.paper:paper-api:26.1.2.build.72-stable'
 }
 
 java {
-    // Paper 1.21.x requires Java 21. The toolchain makes Gradle provision a JDK 21
+    // Paper 26.1.x requires Java 25. The toolchain makes Gradle provision a JDK 25
     // regardless of the JDK used to launch Gradle.
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 

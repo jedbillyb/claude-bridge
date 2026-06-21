@@ -1,9 +1,10 @@
 name: ClaudeBridge
 version: '${version}'
 main: com.jedbillyb.claudebridge.ClaudeBridgePlugin
-api-version: '1.21'
+api-version: '26.1.2'
 authors: [Jed]
 description: Talk to a local Claude Code instance from in-game chat via /claude.
+# Targets Paper 26.1.2+ (Minecraft calendar versioning). Requires Java 25.
 # Folia note: this plugin uses the legacy global scheduler. Run on Paper, not Folia.
 
 commands:
